@@ -11,7 +11,6 @@ class ControllerExtensionModuleCarousel extends Controller {
 		$this->document->addScript('catalog/view/javascript/jquery/swiper/js/swiper.jquery.js');
 
 		$data['banners'] = array();
-
 		$results = $this->model_design_banner->getBanner($setting['banner_id']);
 
 		foreach ($results as $result) {

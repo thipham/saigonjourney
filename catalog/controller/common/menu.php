@@ -8,6 +8,9 @@ class ControllerCommonMenu extends Controller {
 
 		$this->load->model('catalog/product');
 
+		$data['home'] = $this->url->link('common/home');
+		$data['text_home'] = $this->language->get('text_home');
+
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);

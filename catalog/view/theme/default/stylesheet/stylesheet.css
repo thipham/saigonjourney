@@ -744,3 +744,126 @@ h2.price {
     background-image: none;
     background-color: #df5c39;
 }
+
+/* Style for menu */
+:focus {
+	outline: none;
+}
+#menu {
+	background-color: #243d80;
+	border: none;
+	border-radius: 0px;
+	background-image: none;
+	font-size: 14px;
+}
+
+#menu .navbar-collapse {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#menu ul.nav > li:nth-child(1) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/1.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+#menu ul.nav > li:nth-child(2) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/2.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+#menu ul.nav > li:nth-child(3) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/3.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+#menu ul.nav > li:nth-child(4) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/4.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+#menu ul.nav > li:nth-child(5) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/5.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+#menu ul.nav > li:nth-child(6) > a {
+	padding-left: 55px;
+    background-image: url(../image/icons/6.png);
+    background-position: 20px center;
+    background-repeat: no-repeat;
+}
+
+#menu ul li:hover {
+	background-color: #f4960f;
+}
+
+#menu div.dropdown-menu {
+	background-color: #243d80;
+	border: none;
+    border-radius: 0px;
+    padding: 0px;
+    min-width: 220px;
+    width: 100%;
+    box-shadow: none;
+}
+#menu div.dropdown-menu div.dropdown-inner {
+	min-width: 220px;
+    width: 100%;
+}
+#menu div.dropdown-menu a {
+	color: white;
+	height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    font-weight: 500;
+}
+#menu div.dropdown-menu ul {
+	border-bottom: solid 2px orange;
+}
+#menu div.dropdown-menu a:hover {
+	background-color: #f4960f;
+	background-image: none;
+}
+#menu .fa.fa-caret-right {
+	margin-right: 5px;
+}
+
+/* Search */
+#search {
+	margin-top: 25px;
+}
+#search input {
+	border-radius: 0px;
+}
+
+/* Style slider */
+.container + .swiper-viewport {
+	border: none !important;
+	border-radius: 0px !important;
+	box-shadow: none !important;
+	top: -20px !important;
+}
+.swiper-pagination-bullet {
+    width: 13px !important;
+    height: 13px !important;
+    background: white !important;
+    border-radius: 50% !important;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+    margin: 0 5px;
+    opacity: 1;
+}
+.swiper-pagination-bullet:hover {
+	background: #f4960f !important;
+}
+.swiper-pagination-bullet-active {
+    background: #f4960f !important;
+}
+.swiper-pager {
+	display: none;
+}
