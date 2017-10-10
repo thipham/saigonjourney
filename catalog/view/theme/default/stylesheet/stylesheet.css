@@ -841,6 +841,10 @@ h2.price {
 #search input {
 	border-radius: 0px;
 }
+#cart {
+	position: relative;
+	top: 25px;
+}
 
 /* Style slider */
 .container + .swiper-viewport {
@@ -866,4 +870,9 @@ h2.price {
 }
 .swiper-pager {
 	display: none;
+}
+
+/* Feature in home page */ 
+.product-thumb .button-group button {
+	width: 100%;
 }

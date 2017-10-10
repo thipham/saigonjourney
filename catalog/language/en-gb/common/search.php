@@ -1,3 +1,3 @@
 <?php
 // Text
-$_['text_search'] = 'Search tour';
+$_['text_search'] = 'Find your perfect tour';
