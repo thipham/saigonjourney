@@ -69,6 +69,16 @@ $(document).ready(function() {
 		}
 	});
 
+    var availableTags = [
+		"Can Tho",
+		"Cu Chi",
+		"Nha Be",
+		"Saigon"
+    ];
+    $('#search input[name=\'search\']').autocomplete({
+		source: availableTags
+    });
+
 	// Menu
 	$('#menu .dropdown-menu').each(function() {
 		var menu = $('#menu').offset();
@@ -363,7 +373,7 @@ $(document).delegate('.agree', 'click', function(e) {
 });
 
 // Autocomplete */
-(function($) {
+/*(function($) {
 	$.fn.autocomplete = function(option) {
 		return this.each(function() {
 			this.timer = null;
@@ -488,3 +498,4 @@ $(document).delegate('.agree', 'click', function(e) {
 		});
 	}
 })(window.jQuery);
+*/

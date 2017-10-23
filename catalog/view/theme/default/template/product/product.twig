@@ -67,6 +67,7 @@
             {% endif %}
             {% if review_status %}
             <div class="" id="tab-review">
+              <h2>{{ tab_review }}</h2>
               <form class="form-horizontal" id="form-review">
                 <div id="review"></div>
                 <h2>{{ text_write }}</h2>
@@ -133,7 +134,7 @@
             {% if reward %}
             <li>{{ text_reward }} {{ reward }}</li>
             {% endif %}
-            <li>{{ text_stock }} {{ stock }}</li>
+            <!--<li>{{ text_stock }} {{ stock }}</li>-->
           </ul>
           {% if price %}
           <ul class="list-unstyled">

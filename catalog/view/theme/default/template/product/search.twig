@@ -76,9 +76,9 @@
           </div>
         </div>
         <div class="col-md-3 col-sm-6">
-          <div class="form-group">
+          <!--<div class="form-group">
             <a href="{{ compare }}" id="compare-total" class="btn btn-link">{{ text_compare }}</a>
-          </div>
+          </div>-->
         </div>
         <div class="col-md-4 col-xs-6">
           <div class="form-group input-group input-group-sm">
@@ -144,8 +144,10 @@
               </div>
               <div class="button-group">
                 <button type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span></button>
+                <!--
                 <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
                 <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
+                -->
               </div>
             </div>
           </div>
