@@ -92,38 +92,26 @@
         </div>
 
         <p class="cart-message">
-          <?php echo $txt_order_message ; ?>
+          {{ txt_order_message }}
         </p>
         <div class="cart-customer-info row">
           <div class="col-sm-6">
             <div class="">
-              <input type="text" name="cus-first-name" placeholder="{{ txt_order_last_name }}" style="width: 48%; float: left;"  value="{{ customerLastName }}">
-              <input type="text" name="cus-last-name" placeholder="{{ txt_order_first_name }}"  style="width: 48%; float: right;"  value="{{ customerFirstName }}">
-              {% if firstNameError %}
-                <div class="error">{{ firstNameError }}</div>
-              {% endif %}
-              {% if lastNameError %}
-                <div class="error">{{ lastNameError }}</div>
-              {% endif %}
+              <input class="{% if firstNameError %}error{% endif %}" type="text" name="cus-first-name" placeholder="{{ txt_order_first_name }}" style="width: 48%; float: left;"  value="{{ customerFirstName }}">
+              <input class="{% if lastNameError %}error{% endif %}" type="text" name="cus-last-name" placeholder="{{ txt_order_last_name }}"  style="width: 48%; float: right;"  value="{{ customerLastName }}">
             </div>
             <div class="">
-              <input style="width: 100%;" type="text" name="cus-phone" placeholder="{{ txt_order_phone }}" value="{{ customerPhone }}">
-              {% if foneError %}
-                <div class="error">{{ foneError }}</div>
-              {% endif %}
+              <input class="{% if foneError %}error{% endif %}" style="width: 100%;" type="text" name="cus-phone" placeholder="{{ txt_order_phone }}" value="{{ customerPhone }}">
             </div>
             <div class="">
-              <input style="width: 100%;" type="text" name="cus-email" placeholder="{{ txt_order_email }}" value="{{ customerEmail }}">
-              {% if emailError %}
-                <div class="error">{{ emailError }}</div>
-              {% endif %}
+              <input class="{% if emailError %}error{% endif %}" style="width: 100%;" type="text" name="cus-email" placeholder="{{ txt_order_email }}" value="{{ customerEmail }}">
             </div>
             <div class="">
-              <input style="width: 100%;" type="text" name="cus-address" placeholder="{{ txt_order_address }}" value="{{ customerAddress }}">
-              {% if addressError %}
-                <div class="error">{{ addressError }}</div>
-              {% endif %}
+              <input class="{% if addressError %}error{% endif %}" style="width: 100%;" type="text" name="cus-address" placeholder="{{ txt_order_address }}" value="{{ customerAddress }}">
             </div>
+            {% if errorMessage %}
+              <div class="error">{{ errorMessage }}</div>
+            {% endif %}
           </div>
           <div class="col-sm-6">
             <div class="">{{ customerNote }}
@@ -131,7 +119,7 @@
             </div>
           </div>
         </div>
-      
+        
       {% if modules %}
       <h2>{{ text_next }}</h2>
       <p>{{ text_next_choice }}</p>
@@ -139,7 +127,7 @@
         {{ module }}
         {% endfor %} </div>
       {% endif %} <br />
-      <div class="">
+      <div class="row">
         <div class="col-sm-4 col-sm-offset-8">
           <table class="table table-bordered">
             {% for total in totals %}
@@ -153,10 +141,17 @@
       </div>
       <div class="buttons clearfix">
         <div class="pull-left"><a href="{{ continue }}" class="btn btn-default">{{ button_shopping }}</a></div>
-        <div class="pull-right"><input type="submit" name="submitorder" class="btn btn-primary">{{ button_checkout }}</input></div>
+        <div class="pull-right"><input type="submit" name="submitorder" class="btn btn-primary" value="{{ button_checkout }}"></input></div>
       </div>
       {{ content_bottom }}</div>
     </form>
     {{ column_right }}</div>
 </div>
+<script type="text/javascript"><!--
+$('.cart-customer-info input[type=\'text\']').on('change', function() {
+  if ($(this).hasClass('error')) {
+    $(this).removeClass('error');
+  }
+});
+//--></script> 
 {{ footer }} 

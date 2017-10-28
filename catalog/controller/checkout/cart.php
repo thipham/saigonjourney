@@ -1,5 +1,6 @@
 <?php
 class ControllerCheckoutCart extends Controller {
+	private $error = array();
 	public function index() {
 		$this->load->language('checkout/cart');
 
@@ -70,28 +71,33 @@ class ControllerCheckoutCart extends Controller {
 
 
 			// Add custom checkout
-			if (isset($error['cus-first-name'])) {
-				$data['firstNameError'] = $error['cus-first-name'];
+			if (isset($this->error['cus-first-name'])) {
+				$data['firstNameError'] = $this->error['cus-first-name'];
+				$data['errorMessage'] = $this->language->get('error_message');
 			}else {
 				$data['firstNameError'] = '';
 			}
-			if (isset($error['cus-last-name'])) {
-				$data['lastNameError'] = $error['cus-last-name'];
+			if (isset($this->error['cus-last-name'])) {
+				$data['lastNameError'] = $this->error['cus-last-name'];
+				$data['errorMessage'] = $this->language->get('error_message');
 			}else {
 				$data['lastNameError'] = '';
 			}
-			if (isset($error['cus-fone'])) {
-				$data['foneError'] = $error['cus-fone'];
+			if (isset($this->error['cus-fone'])) {
+				$data['foneError'] = $this->error['cus-fone'];
+				$data['errorMessage'] = $this->language->get('error_message');
 			}else {
 				$data['foneError'] = '';
 			}
-			if (isset($error['cus-email'])) {
-				$data['emailError'] = $error['cus-email'];
+			if (isset($this->error['cus-email'])) {
+				$data['emailError'] = $this->error['cus-email'];
+				$data['errorMessage'] = $this->language->get('error_message');
 			}else {
 				$data['emailError'] = '';
 			}
-			if (isset($error['cus-address'])) {
-				$data['addressError'] = $error['cus-address'];
+			if (isset($this->error['cus-address'])) {
+				$data['addressError'] = $this->error['cus-address'];
+				$data['errorMessage'] = $this->language->get('error_message');
 			}else {
 				$data['addressError'] = '';
 			}
@@ -102,10 +108,6 @@ class ControllerCheckoutCart extends Controller {
 
 
 			$data['action'] = $this->url->link('checkout/cart/edit', '', true);
-
-			// Add custom checkout
-			$data['order'] = $this->url->link('checkout/confirmOrder');
-			$data['action'] = $this->url->link('checkout/cart'); 
 
 			if ($this->config->get('config_cart_weight')) {
 				$data['weight'] = $this->weight->format($this->cart->getWeight(), $this->config->get('config_weight_class_id'), $this->language->get('decimal_point'), $this->language->get('thousand_point'));
@@ -280,6 +282,11 @@ class ControllerCheckoutCart extends Controller {
 
 			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 
+			// Add custom checkout
+
+			$data['order'] = $this->url->link('checkout/confirmOrder');
+			$data['action'] = $this->url->link('checkout/cart'); 
+
 			$this->load->model('setting/extension');
 
 			$data['modules'] = array();
@@ -335,27 +342,27 @@ class ControllerCheckoutCart extends Controller {
 		$note = $this->request->post['cus-note'];
 
 		if ((utf8_strlen($firstname) < 1) || (utf8_strlen($firstname) > 32)) {
-      		$error['cus-first-name'] = $this->language->get('error_order_first_name');
+      		$this->error['cus-first-name'] = $this->language->get('error_order_first_name');
       		$hasError = true;
     	}
 
     	if ((utf8_strlen($lastname) < 1) || (utf8_strlen($lastname) > 32)) {
-      		$error['cus-last-name'] = $this->language->get('error_order_last_name');
+      		$this->error['cus-last-name'] = $this->language->get('error_order_last_name');
       		$hasError = true;
     	}
 
     	if ((utf8_strlen($fone) < 8) || (utf8_strlen($fone) > 15)) {
-      		$error['cus-fone'] = $this->language->get('error_order_fone');
+      		$this->error['cus-fone'] = $this->language->get('error_order_fone');
       		$hasError = true;
     	}
 
     	if (utf8_strlen($email) < 3 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      		$error['cus-email'] = $this->language->get('error_order_email');
+      		$this->error['cus-email'] = $this->language->get('error_order_email');
       		$hasError = true;
     	}
 
     	if (utf8_strlen($address) < 1) {
-      		$error['cus-address'] = $this->language->get('error_order_address');
+      		$this->error['cus-address'] = $this->language->get('error_order_address');
       		$hasError = true;
     	}
 
@@ -586,7 +593,8 @@ class ControllerCheckoutCart extends Controller {
   	protected function cacheValues(){
   		//Check and set values:
 		if (isset($this->request->post['cus-first-name'])) {
-			$this->session->data['customerFirstName'] = $this->request->post['cus-first-name'];			
+			$this->session->data['customerFirstName'] = $this->request->post['cus-first-name'];		
+			echo $this->session->data['customerFirstName'];	
 		}
 		if (isset($this->request->post['cus-last-name'])) {
 			$this->session->data['customerLastName'] = $this->request->post['cus-last-name'];
@@ -607,7 +615,7 @@ class ControllerCheckoutCart extends Controller {
 
   	protected function setValues() {
   		if (isset($this->session->data['customerFirstName'])) {
-			$data['customerFirstName'] = $this->session->data['customerFirstName'];				
+			$data['customerFirstName'] = $this->session->data['customerFirstName'];		
 		}else {
 			$data['customerFirstName'] = '';
 		}

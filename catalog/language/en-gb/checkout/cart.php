@@ -43,7 +43,11 @@ $_['error_recurring_required'] = 'Please select a payment recurring!';
 //Custom:
 $_['button_clear_cart']        = 'Clear cart';
 $_['button_confirm_order']     = 'Order';
-$_['text_order_message']     = 'Thank you for your order. Your order will be confirmed in 1h. If you need it urgently, you can contact us directly.';
+$_['text_order_message']     = 'Thank you very much for booking with Saigon In Spirit. Please fill in the form with your proper information. 
+Once being submitted, your request will be routed to our sales representatives who will respond you shortly the booking status.
+Please note that fields marked with an (*) are mandatory.
+Should you have further questions, please do not hesitate to contact us.
+We look forward to your arrival.';
 $_['text_confirm_clear']     = 'Are you sure you want to clear your cart ?';
 $_['text_order_first_name']  = 'First name (*)';
 $_['text_order_last_name']   = 'Last name (*)';
@@ -57,3 +61,4 @@ $_['error_order_last_name']   = 'Length of last name must be between 1-32 charac
 $_['error_order_fone']        = 'Phone number is required';
 $_['error_order_address']     = 'Shipping address is required';
 $_['error_order_email']       = 'Email is invalid';
+$_['error_message']           = 'Please fill out required fields.';

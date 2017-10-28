@@ -951,3 +951,10 @@ ul.list_social li:nth-child(3) .social {
 	margin-bottom: 8px;
 	height: 25px;
 }
+.cart-customer-info input.error {
+	border: solid 1px #800000;
+}
+div.error {
+	color: #800000;
+	font-size: 18px;
+}
