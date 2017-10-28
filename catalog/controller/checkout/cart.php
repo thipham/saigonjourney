@@ -3,6 +3,20 @@ class ControllerCheckoutCart extends Controller {
 	public function index() {
 		$this->load->language('checkout/cart');
 
+		// Add custom checkout
+		if(isset($this->request->post['submitorder']) && $this->cart->hasProducts()) {
+			
+			$result = $this->confirmOrder();
+			if($result){
+				$this->response->redirect($this->url->link('checkout/success'));
+			}
+		}
+
+		$this->cacheValues();
+
+
+
+
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = array();
@@ -18,6 +32,18 @@ class ControllerCheckoutCart extends Controller {
 		);
 
 		if ($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) {
+
+			// Add custom checkout
+			$data['txt_order_last_name'] = $this->language->get('text_order_last_name');
+      		$data['txt_order_first_name'] = $this->language->get('text_order_first_name');
+      		$data['txt_order_phone'] = $this->language->get('text_order_phone');
+      		$data['txt_order_email'] = $this->language->get('text_order_email');
+      		$data['txt_order_address'] = $this->language->get('text_order_address');
+      		$data['txt_order_note'] = $this->language->get('text_order_note');
+      		$data['txt_confirm_clear'] = $this->language->get('text_confirm_clear');
+      		$data['txt_order_message'] = $this->language->get('text_order_message');
+
+
 			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
 				$data['error_warning'] = $this->language->get('error_stock');
 			} elseif (isset($this->session->data['error'])) {
@@ -42,7 +68,44 @@ class ControllerCheckoutCart extends Controller {
 				$data['success'] = '';
 			}
 
+
+			// Add custom checkout
+			if (isset($error['cus-first-name'])) {
+				$data['firstNameError'] = $error['cus-first-name'];
+			}else {
+				$data['firstNameError'] = '';
+			}
+			if (isset($error['cus-last-name'])) {
+				$data['lastNameError'] = $error['cus-last-name'];
+			}else {
+				$data['lastNameError'] = '';
+			}
+			if (isset($error['cus-fone'])) {
+				$data['foneError'] = $error['cus-fone'];
+			}else {
+				$data['foneError'] = '';
+			}
+			if (isset($error['cus-email'])) {
+				$data['emailError'] = $error['cus-email'];
+			}else {
+				$data['emailError'] = '';
+			}
+			if (isset($error['cus-address'])) {
+				$data['addressError'] = $error['cus-address'];
+			}else {
+				$data['addressError'] = '';
+			}
+
+			//Set values:
+			$this->setValues();
+
+
+
 			$data['action'] = $this->url->link('checkout/cart/edit', '', true);
+
+			// Add custom checkout
+			$data['order'] = $this->url->link('checkout/confirmOrder');
+			$data['action'] = $this->url->link('checkout/cart'); 
 
 			if ($this->config->get('config_cart_weight')) {
 				$data['weight'] = $this->weight->format($this->cart->getWeight(), $this->config->get('config_weight_class_id'), $this->language->get('decimal_point'), $this->language->get('thousand_point'));
@@ -258,6 +321,327 @@ class ControllerCheckoutCart extends Controller {
 			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
 	}
+
+	public function confirmOrder() {
+
+		$hasError = false;
+
+		//Check user's inputs:
+		$firstname = $this->request->post['cus-first-name']; 
+		$lastname = $this->request->post['cus-last-name'];
+		$fone = $this->request->post['cus-phone'];
+		$email = $this->request->post['cus-email'];
+		$address = $this->request->post['cus-address'];
+		$note = $this->request->post['cus-note'];
+
+		if ((utf8_strlen($firstname) < 1) || (utf8_strlen($firstname) > 32)) {
+      		$error['cus-first-name'] = $this->language->get('error_order_first_name');
+      		$hasError = true;
+    	}
+
+    	if ((utf8_strlen($lastname) < 1) || (utf8_strlen($lastname) > 32)) {
+      		$error['cus-last-name'] = $this->language->get('error_order_last_name');
+      		$hasError = true;
+    	}
+
+    	if ((utf8_strlen($fone) < 8) || (utf8_strlen($fone) > 15)) {
+      		$error['cus-fone'] = $this->language->get('error_order_fone');
+      		$hasError = true;
+    	}
+
+    	if (utf8_strlen($email) < 3 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      		$error['cus-email'] = $this->language->get('error_order_email');
+      		$hasError = true;
+    	}
+
+    	if (utf8_strlen($address) < 1) {
+      		$error['cus-address'] = $this->language->get('error_order_address');
+      		$hasError = true;
+    	}
+
+    	if($hasError)
+    		return false;
+
+		$total_data = array();
+		$total = 0;
+		$taxes = $this->cart->getTaxes();
+		 
+		$this->load->model('setting/extension');
+		
+		$sort_order = array();		
+		$results = $this->model_setting_extension->getExtensions('total');			
+		foreach ($results as $key => $value) {
+			$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
+		}			
+		array_multisort($sort_order, SORT_ASC, $results);
+		foreach ($results as $result) {
+			if ($this->config->get($result['code'] . '_status')) {
+				$this->load->model('total/' . $result['code']);
+	
+				$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
+			}
+		}
+		
+		$sort_order = array(); 		  
+		foreach ($total_data as $key => $value) {
+			$sort_order[$key] = $value['sort_order'];
+		}	
+		array_multisort($sort_order, SORT_ASC, $total_data);			
+		
+		//Data to save:
+		$data = array();		
+		$data['totals'] = $total_data;
+		$data['comment'] = $note;
+		$data['total'] = $total;
+		$data['affiliate_id'] = 0;
+		$data['commission'] = 0;
+		$data['order_status_id'] = $this->config->get('config_order_status_id');
+		$data['language_id'] = $this->config->get('config_language_id');
+		$data['currency_id'] = $this->currency->getId($this->session->data['currency']);
+		$data['currency_code'] = $this->session->data['currency'];
+		$data['currency_value'] = $this->currency->getValue($this->session->data['currency']);
+		$data['ip'] = $this->request->server['REMOTE_ADDR'];
+
+		$data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
+		$data['store_id'] = $this->config->get('config_store_id');
+		$data['store_name'] = $this->config->get('config_name');
+		
+		if ($data['store_id']) {
+			$data['store_url'] = $this->config->get('config_url');		
+		} else {
+			$data['store_url'] = HTTP_SERVER;	
+		}
+		
+		$data['customer_id'] = 0;
+		$data['customer_group_id'] = 1;
+		$data['firstname'] = $firstname;
+		$data['lastname'] = $lastname;
+		$data['email'] = $email;
+		$data['telephone'] = $fone;
+		$data['fax'] = '';
+		$data['payment_firstname'] = $firstname;
+		$data['payment_lastname'] =  $lastname;	
+		$data['payment_address_1'] = $address;
+		$data['payment_address_2'] = '';
+		$data['payment_company'] = '';
+		$data['payment_company_id'] = '';		
+		$data['payment_city'] = '0';
+		$data['payment_postcode'] = '0';
+		$data['payment_country'] = 'Viet Nam';
+		$data['payment_country_id'] = '320';
+		$data['payment_zone'] = '0';
+		$data['payment_zone_id'] = '0';
+		$data['payment_address_format'] = '';
+		$data['payment_tax_id'] = '0';
+		$data['payment_method'] = 'COD';
+		$data['payment_code'] = 'cod';	
+
+		$data['affiliate_id'] = 0;
+		$data['commission'] = 0;
+		$data['marketing_id'] = 0;
+		$data['tracking'] = '';		
+					
+		if ($this->cart->hasShipping()) {
+			$data['shipping_firstname'] = $firstname;
+			$data['shipping_lastname'] = $lastname;	
+			$data['shipping_address_1'] = $address;
+			$data['shipping_address_2'] = '';
+			$data['shipping_company'] = '';	
+			$data['shipping_postcode'] = '0';
+			$data['shipping_country'] = 'Viet Nam';
+			$data['shipping_country_id'] = '230';
+			$data['shipping_zone'] = '0';
+			$data['shipping_zone_id'] = '0';
+			$data['shipping_address_format'] = '';
+			$data['shipping_city'] = '';
+			$data['shipping_method'] = 'Free shipping';
+			$data['shipping_code'] = 'free.free';
+		} else {
+			$data['shipping_firstname'] = $firstname;
+			$data['shipping_lastname'] = $lastname;	
+			$data['shipping_address_1'] = $address;
+			$data['shipping_address_2'] = '';
+			$data['shipping_company'] = '';	
+			$data['shipping_postcode'] = '0';
+			$data['shipping_country'] = 'Viet Nam';
+			$data['shipping_country_id'] = '230';
+			$data['shipping_zone'] = '0';
+			$data['shipping_zone_id'] = '0';
+			$data['shipping_address_format'] = '';
+			$data['shipping_city'] = '';
+			$data['shipping_method'] = 'Free shipping';
+			$data['shipping_code'] = 'free.free';
+		}
+		
+		$product_data = array();		
+		foreach ($this->cart->getProducts() as $product) {
+			$product_data[] = array(
+				'product_id' => $product['product_id'],
+				'name'       => $product['name'],
+				'model'      => $product['model'],
+				'download'   => $product['download'],
+				'quantity'   => $product['quantity'],
+				'subtract'   => $product['subtract'],
+				'price'      => $product['price'],
+				'total'      => $product['total'],
+				'tax'        => 0,
+				'reward'     => $product['reward'],
+				'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id'])
+			);
+		}
+		$data['products'] = $product_data;
+
+		if (!empty($this->request->server['HTTP_X_FORWARDED_FOR'])) {
+			$data['forwarded_ip'] = $this->request->server['HTTP_X_FORWARDED_FOR'];	
+		} elseif(!empty($this->request->server['HTTP_CLIENT_IP'])) {
+			$data['forwarded_ip'] = $this->request->server['HTTP_CLIENT_IP'];	
+		} else {
+			$data['forwarded_ip'] = '';
+		}
+		
+		if (isset($this->request->server['HTTP_USER_AGENT'])) {
+			$data['user_agent'] = $this->request->server['HTTP_USER_AGENT'];	
+		} else {
+			$data['user_agent'] = '';
+		}
+		
+		if (isset($this->request->server['HTTP_ACCEPT_LANGUAGE'])) {
+			$data['accept_language'] = $this->request->server['HTTP_ACCEPT_LANGUAGE'];	
+		} else {
+			$data['accept_language'] = '';
+		}
+					
+		$this->load->model('checkout/order');			
+		$this->session->data['order_id'] = $this->model_checkout_order->addOrderAsConfirmed($data);
+		
+		//Send mail:
+		if(isset($this->session->data['order_id']) && $this->session->data['order_id'] != null){
+			//$this->sendMail($email, $data);
+		}
+
+		return true;
+  	}
+	
+	private function sendMail($cusEmail, $orderDetail){
+		try {
+		
+			$htmlContent = "Kính chào quý khách " . $orderDetail["lastname"] . " " . $orderDetail["firstname"] . "! <br><br>" ;
+			$htmlContent .= "Cám ơn quý khách đã chọn sản phẩm của chúng tôi. " . "<b>ChiThu.vn</b> vừa nhận được đơn hàng số " . $this->session->data['order_id'] . " của quý khách.  <br>";
+			$htmlContent .= "Bằng email này, chúng tôi xác nhận đơn hàng của quý khách đã được đặt thành công. Nhân viên của chúng tôi sẽ liên lạc với quý khách để xác nhận thời gian giao hàng cụ thể.  <br> <br>";
+			$htmlContent .= "Thông tin đơn hàng như sau:  <br> <br>";
+			$htmlContent .= "<table>";
+			$htmlContent .= "<thead>";
+			$htmlContent .= "<tr>";
+			$htmlContent .= "<td>STT</td><td >Sản Phẩm</td><td>Số Lượng</td><td>Đơn Giá</td><td>Thành tiền</td>";
+			$htmlContent .= "</tr>";
+			$htmlContent .= "</thead>";
+			$htmlContent .= "<tbody>";
+			$index = 1;
+			foreach ($orderDetail["products"] as $product) {				
+				$htmlContent .= "<tr>";
+				$htmlContent .= "<td>". $index . "</td>";
+				$htmlContent .= "<td>". $product["name"] . "</td>";
+				$htmlContent .= "<td>". $product["quantity"] . "</td>";
+				$htmlContent .= "<td>". number_format($product["price"]) . "</td>";
+				$htmlContent .= "<td>". number_format($product["total"]) . "</td>";
+				$htmlContent .= "</tr>";
+			}
+			$htmlContent .= "<tr><td colspan='4' style='text-align: right; padding-right: 15px;'>Tổng cộng</td><td>".  $orderDetail["totals"][count($orderDetail["totals"]) - 1]['text'] ."</td></tr>";
+			$htmlContent .= "</tbody>";
+			$htmlContent .= "</table>";
+			$htmlContent .= "<p>Trân trọng, <br> <strong>Quản lý ChiThu.vn</strong></p>";
+
+			$message  = '<html dir="ltr" lang="vi">';
+			$message .= '  <head>';
+			$message .= '    <title>Xác nhận đơn hàng - ChiThu.vn</title>';
+			$message .= '    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
+			$message .= '    <style type="text/css">';
+			$message .= '    body { font-size: 14px; } table{ border-collapse:collapse; width: 100%; } table td { text-align: center; border: 1px solid #DDD; padding: 10px; }';
+			$message .= '    table thead td { background-color: #F7A52F; color: #FFF;}';
+			$message .= '    </style>';
+			$message .= '  </head>';
+			$message .= '  <body><p>' . $htmlContent. '</p><p><img src="http://chithu.vn/image/data/logo.png" /></p></body>';
+			$message .= '</html>';
+			
+			$mail = new Mail();	
+			$mail->protocol = $this->config->get('config_mail_protocol');
+			$mail->parameter = $this->config->get('config_mail_parameter');
+			$mail->hostname = $this->config->get('config_smtp_host');
+			$mail->username = $this->config->get('config_smtp_username');
+			$mail->password = $this->config->get('config_smtp_password');
+			$mail->port = $this->config->get('config_smtp_port');
+			$mail->timeout = $this->config->get('config_smtp_timeout');				
+			$mail->setTo($cusEmail);
+			$mail->setFrom($this->config->get('config_email'));
+			$mail->setSender($this->config->get('config_name'));
+			$mail->setSubject(html_entity_decode('Thông báo đơn hàng - ChiThu.vn', ENT_QUOTES, 'UTF-8'));				
+			$mail->setHtml($message);
+			$mail->send();
+		}
+		catch(Exception  $e){
+			echo $e->getMessage();
+		}
+	}
+
+  	protected function cacheValues(){
+  		//Check and set values:
+		if (isset($this->request->post['cus-first-name'])) {
+			$this->session->data['customerFirstName'] = $this->request->post['cus-first-name'];			
+		}
+		if (isset($this->request->post['cus-last-name'])) {
+			$this->session->data['customerLastName'] = $this->request->post['cus-last-name'];
+		}
+		if (isset($this->request->post['cus-phone'])) {
+			$this->session->data['customerPhone'] = $this->request->post['cus-phone'];
+		}
+		if (isset($this->request->post['cus-email'])) {
+			$this->session->data['customerEmail'] = $this->request->post['cus-email'];
+		}
+		if (isset($this->request->post['cus-address'])) {
+			$this->session->data['customerAddress'] = $this->request->post['cus-address'];
+		}
+		if (isset($this->request->post['cus-note'])) {
+			$this->session->data['customerNote'] = $this->request->post['cus-note'];
+		}
+  	}
+
+  	protected function setValues() {
+  		if (isset($this->session->data['customerFirstName'])) {
+			$data['customerFirstName'] = $this->session->data['customerFirstName'];				
+		}else {
+			$data['customerFirstName'] = '';
+		}
+		if (isset($this->session->data['customerLastName'])) {
+			$data['customerLastName'] = $this->session->data['customerLastName'];				
+		}else {
+			$data['customerLastName'] = '';
+		}
+		if (isset($this->session->data['customerFirstName'])) {
+			$data['customerFirstName'] = $this->session->data['customerFirstName'];				
+		}else {
+			$data['customerFirstName'] = '';
+		}
+		if (isset($this->session->data['customerPhone'])) {
+			$data['customerPhone'] = $this->session->data['customerPhone'];				
+		}else {
+			$data['customerPhone'] = '';
+		}
+		if (isset($this->session->data['customerEmail'])) {
+			$data['customerEmail'] = $this->session->data['customerEmail'];				
+		}else {
+			$data['customerEmail'] = '';
+		}
+		if (isset($this->session->data['customerAddress'])) {
+			$data['customerAddress'] = $this->session->data['customerAddress'];				
+		}else {
+			$data['customerAddress'] = '';
+		}
+		if (isset($this->session->data['customerNote'])) {
+			$data['customerNote'] = $this->session->data['customerNote'];				
+		}else {
+			$data['customerNote'] = '';
+		}
+  	}
 
 	public function add() {
 		$this->load->language('checkout/cart');

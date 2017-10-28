@@ -946,3 +946,8 @@ ul.list_social li:nth-child(3) .social {
 	visibility: hidden;
 	opacity: 0;
 }
+
+.cart-customer-info > div > div {
+	margin-bottom: 8px;
+	height: 25px;
+}

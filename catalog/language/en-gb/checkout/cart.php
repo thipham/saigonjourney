@@ -39,3 +39,21 @@ $_['error_minimum']            = 'Minimum order amount for %s is %s!';
 $_['error_required']           = '%s required!';
 $_['error_product']            = 'Warning: There are no products in your cart!';
 $_['error_recurring_required'] = 'Please select a payment recurring!';
+
+//Custom:
+$_['button_clear_cart']        = 'Clear cart';
+$_['button_confirm_order']     = 'Order';
+$_['text_order_message']     = 'Thank you for your order. Your order will be confirmed in 1h. If you need it urgently, you can contact us directly.';
+$_['text_confirm_clear']     = 'Are you sure you want to clear your cart ?';
+$_['text_order_first_name']  = 'First name (*)';
+$_['text_order_last_name']   = 'Last name (*)';
+$_['text_order_phone']        = 'Phone (*)';
+$_['text_order_address']     = 'Shipping address (*)';
+$_['text_order_email']       = 'Email (*)';
+$_['text_order_note']        = 'Comment';
+$_['column_no']              = 'No.';
+$_['error_order_first_name']  = 'Length of first name must be between 1-32 characters';
+$_['error_order_last_name']   = 'Length of last name must be between 1-32 characters';
+$_['error_order_fone']        = 'Phone number is required';
+$_['error_order_address']     = 'Shipping address is required';
+$_['error_order_email']       = 'Email is invalid';

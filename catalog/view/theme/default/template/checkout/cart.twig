@@ -28,12 +28,13 @@
     {% else %}
     {% set class = 'col-sm-12' %}
     {% endif %}
+    <form action="{{ action }}" method="post" enctype="multipart/form-data">
     <div id="content" class="{{ class }}">{{ content_top }}
       <h1>{{ heading_title }}
         {% if weight %}
         &nbsp;({{ weight }})
         {% endif %} </h1>
-      <form action="{{ action }}" method="post" enctype="multipart/form-data">
+      
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>
@@ -89,7 +90,48 @@
             
           </table>
         </div>
-      </form>
+
+        <p class="cart-message">
+          <?php echo $txt_order_message ; ?>
+        </p>
+        <div class="cart-customer-info row">
+          <div class="col-sm-6">
+            <div class="">
+              <input type="text" name="cus-first-name" placeholder="{{ txt_order_last_name }}" style="width: 48%; float: left;"  value="{{ customerLastName }}">
+              <input type="text" name="cus-last-name" placeholder="{{ txt_order_first_name }}"  style="width: 48%; float: right;"  value="{{ customerFirstName }}">
+              {% if firstNameError %}
+                <div class="error">{{ firstNameError }}</div>
+              {% endif %}
+              {% if lastNameError %}
+                <div class="error">{{ lastNameError }}</div>
+              {% endif %}
+            </div>
+            <div class="">
+              <input style="width: 100%;" type="text" name="cus-phone" placeholder="{{ txt_order_phone }}" value="{{ customerPhone }}">
+              {% if foneError %}
+                <div class="error">{{ foneError }}</div>
+              {% endif %}
+            </div>
+            <div class="">
+              <input style="width: 100%;" type="text" name="cus-email" placeholder="{{ txt_order_email }}" value="{{ customerEmail }}">
+              {% if emailError %}
+                <div class="error">{{ emailError }}</div>
+              {% endif %}
+            </div>
+            <div class="">
+              <input style="width: 100%;" type="text" name="cus-address" placeholder="{{ txt_order_address }}" value="{{ customerAddress }}">
+              {% if addressError %}
+                <div class="error">{{ addressError }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="">{{ customerNote }}
+              <textarea style="width: 100%;" name="cus-note" placeholder="{{ txt_order_note }}" rows="6">{{ customerNote }}</textarea>
+            </div>
+          </div>
+        </div>
+      
       {% if modules %}
       <h2>{{ text_next }}</h2>
       <p>{{ text_next_choice }}</p>
@@ -97,7 +139,7 @@
         {{ module }}
         {% endfor %} </div>
       {% endif %} <br />
-      <div class="row">
+      <div class="">
         <div class="col-sm-4 col-sm-offset-8">
           <table class="table table-bordered">
             {% for total in totals %}
@@ -111,9 +153,10 @@
       </div>
       <div class="buttons clearfix">
         <div class="pull-left"><a href="{{ continue }}" class="btn btn-default">{{ button_shopping }}</a></div>
-        <div class="pull-right"><a href="{{ checkout }}" class="btn btn-primary">{{ button_checkout }}</a></div>
+        <div class="pull-right"><input type="submit" name="submitorder" class="btn btn-primary">{{ button_checkout }}</input></div>
       </div>
       {{ content_bottom }}</div>
+    </form>
     {{ column_right }}</div>
 </div>
 {{ footer }} 

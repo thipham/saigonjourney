@@ -1,14 +1,14 @@
 <?php
 // HTTP
-define('HTTP_SERVER', 'http://localhost/journey/');
+define('HTTP_SERVER', 'http://localhost/saigoninspirit/');
 
 // HTTPS
-define('HTTPS_SERVER', 'http://localhost/journey/');
+define('HTTPS_SERVER', 'http://localhost/saigoninspirit/');
 
 // DIR
-define('DIR_APPLICATION', 'C:/wamp/www/journey/catalog/');
-define('DIR_SYSTEM', 'C:/wamp/www/journey/system/');
-define('DIR_IMAGE', 'C:/wamp/www/journey/image/');
+define('DIR_APPLICATION', 'C:/wamp/www/saigoninspirit/catalog/');
+define('DIR_SYSTEM', 'C:/wamp/www/saigoninspirit/system/');
+define('DIR_IMAGE', 'C:/wamp/www/saigoninspirit/image/');
 define('DIR_STORAGE', 'C:/wamp/storage/');
 define('DIR_LANGUAGE', DIR_APPLICATION . 'language/');
 define('DIR_TEMPLATE', DIR_APPLICATION . 'view/theme/');
@@ -25,6 +25,6 @@ define('DB_DRIVER', 'mysqli');
 define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'admin');
 define('DB_PASSWORD', 'admin');
-define('DB_DATABASE', 'journey1');
+define('DB_DATABASE', 'saigoninspirit');
 define('DB_PORT', '3306');
 define('DB_PREFIX', 'oc_');
