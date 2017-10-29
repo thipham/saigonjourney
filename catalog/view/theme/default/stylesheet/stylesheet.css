@@ -753,7 +753,7 @@ h2.price {
 	right: -3px;
 }
 #menu {
-	background-color: #243d80;
+	background-color: #004d00;
 	border: none;
 	border-radius: 0px;
 	background-image: none;
@@ -804,11 +804,11 @@ h2.price {
 }
 
 #menu ul li:hover {
-	background-color: #f4960f;
+	background-color: #e6e600;
 }
 
 #menu div.dropdown-menu {
-	background-color: #243d80;
+	background-color: #004d00;
 	border: none;
     border-radius: 0px;
     padding: 0px;
@@ -828,14 +828,19 @@ h2.price {
     font-weight: 500;
 }
 #menu div.dropdown-menu ul {
-	border-bottom: solid 2px #f4960f;
+	border-bottom: solid 2px #e6e600;
 }
 #menu div.dropdown-menu a:hover {
-	background-color: #f4960f;
+	background-color: #e6e600;
 	background-image: none;
 }
 #menu .fa.fa-caret-right {
 	margin-right: 5px;
+}
+#menu ul.navbar-nav {
+	width: 1170px;
+    margin: 0 auto;
+    float: none;
 }
 
 /* Search */
@@ -862,8 +867,8 @@ ul.list-inline .fa {
 header {
 	padding-top: 20px;
 	margin-bottom: 20px;
-	border-top: solid 4px #f4960f;
-	border-bottom: solid 2px #f4960f;
+	border-top: solid 4px #ffff00;
+	border-bottom: solid 2px #ffff00;
 }
 
 /* Style slider */
@@ -883,10 +888,10 @@ header + .swiper-viewport {
     opacity: 1;
 }
 .swiper-pagination-bullet:hover {
-	background: #f4960f !important;
+	background: #ffff00 !important;
 }
 .swiper-pagination-bullet-active {
-    background: #f4960f !important;
+    background: #e6e600 !important;
 }
 .swiper-pager {
 	display: none;

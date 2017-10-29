@@ -11,6 +11,13 @@ class ControllerCheckoutCart extends Controller {
 			if($result){
 				$this->response->redirect($this->url->link('checkout/success'));
 			}
+		} elseif(!empty($this->request->post['quantity'])){
+			
+			foreach ($this->request->post['quantity'] as $key => $value) {
+				$this->cart->update($key, $value);
+			}
+			$this->cacheValues();
+			$this->response->redirect($this->url->link('checkout/cart'));
 		}
 
 		$this->cacheValues();
@@ -283,7 +290,6 @@ class ControllerCheckoutCart extends Controller {
 			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 
 			// Add custom checkout
-
 			$data['order'] = $this->url->link('checkout/confirmOrder');
 			$data['action'] = $this->url->link('checkout/cart'); 
 
@@ -370,7 +376,7 @@ class ControllerCheckoutCart extends Controller {
     		return false;
 
 		$total_data = array();
-		$total = 0;
+		$total = $this->cart->getTotal();
 		$taxes = $this->cart->getTaxes();
 		 
 		$this->load->model('setting/extension');
@@ -594,10 +600,10 @@ class ControllerCheckoutCart extends Controller {
   		//Check and set values:
 		if (isset($this->request->post['cus-first-name'])) {
 			$this->session->data['customerFirstName'] = $this->request->post['cus-first-name'];		
-			echo $this->session->data['customerFirstName'];	
 		}
 		if (isset($this->request->post['cus-last-name'])) {
 			$this->session->data['customerLastName'] = $this->request->post['cus-last-name'];
+			echo $data['customerLastName'];
 		}
 		if (isset($this->request->post['cus-phone'])) {
 			$this->session->data['customerPhone'] = $this->request->post['cus-phone'];
@@ -616,6 +622,7 @@ class ControllerCheckoutCart extends Controller {
   	protected function setValues() {
   		if (isset($this->session->data['customerFirstName'])) {
 			$data['customerFirstName'] = $this->session->data['customerFirstName'];		
+			echo $data['customerFirstName'];
 		}else {
 			$data['customerFirstName'] = '';
 		}
@@ -774,6 +781,7 @@ class ControllerCheckoutCart extends Controller {
 	}
 
 	public function edit() {
+		echo "DM";
 		$this->load->language('checkout/cart');
 
 		$json = array();
