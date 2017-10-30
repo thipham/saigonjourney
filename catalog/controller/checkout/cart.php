@@ -603,7 +603,7 @@ class ControllerCheckoutCart extends Controller {
 		}
 		if (isset($this->request->post['cus-last-name'])) {
 			$this->session->data['customerLastName'] = $this->request->post['cus-last-name'];
-			echo $data['customerLastName'];
+			//echo $data['customerLastName'];
 		}
 		if (isset($this->request->post['cus-phone'])) {
 			$this->session->data['customerPhone'] = $this->request->post['cus-phone'];
@@ -622,7 +622,7 @@ class ControllerCheckoutCart extends Controller {
   	protected function setValues() {
   		if (isset($this->session->data['customerFirstName'])) {
 			$data['customerFirstName'] = $this->session->data['customerFirstName'];		
-			echo $data['customerFirstName'];
+			//echo $data['customerFirstName'];
 		}else {
 			$data['customerFirstName'] = '';
 		}
